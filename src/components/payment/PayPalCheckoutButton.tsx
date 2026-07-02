@@ -71,7 +71,7 @@ const PayPalCheckoutButton: React.FC<PayPalCheckoutButtonProps> = ({
               },
             ],
             application_context: {
-              brand_name: 'Connect AI LAB',
+              brand_name: 'k-mong',
               shipping_preference: 'NO_SHIPPING' as const,
               user_action: 'PAY_NOW' as const,
             },
@@ -91,6 +91,15 @@ const PayPalCheckoutButton: React.FC<PayPalCheckoutButtonProps> = ({
           onCancel?.();
         }}
       />
+      {import.meta.env.DEV && (
+        <button
+          type="button"
+          onClick={() => onSuccess({ id: 'mock_paypal_success' })}
+          className="mt-3 w-full h-8 text-[11px] text-purple-400/70 hover:text-purple-300 hover:border-purple-400/40 transition-colors bg-white/[0.02] border border-dashed border-purple-500/25 rounded-lg cursor-pointer flex items-center justify-center gap-1"
+        >
+          ⚙️ [Dev Mode] Bypass Payment (Mock Success)
+        </button>
+      )}
     </div>
   );
 };

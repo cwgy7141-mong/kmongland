@@ -6,8 +6,8 @@
 
 export const SITE_CONFIG = {
   // 브랜드
-  brandName: 'k-mong-land',
-  copyright: '© 2026 k-mong-land Academy. All rights reserved.',
+  brandName: 'k-mong',
+  copyright: '© 2026 k-mong Academy. All rights reserved.',
 
   // 히어로 섹션
   hero: {
@@ -15,7 +15,7 @@ export const SITE_CONFIG = {
     titleRight: ['K-Pop', 'Culture'],
     watermark: 'KOREAN',
     description:
-      'Master the Korean language with prestige. k-mong-land offers premium, immersive online Korean courses combining elite linguistic pedagogy and cultural depth, designed for global professionals and learners.',
+      'Master the Korean language with prestige. k-mong offers premium, immersive online Korean courses combining elite linguistic pedagogy and cultural depth, designed for global professionals and learners.',
   },
 
   // 시네마틱 텍스트 섹션
@@ -79,7 +79,7 @@ export const SITE_CONFIG = {
   },
 
   footer: {
-    logoLabel: 'k-mong-land',
+    logoLabel: 'k-mong',
     tagline: 'Premium Online Korean Academy',
     quickLinks: [
       { label: 'Tutors', scrollMultiplier: 1 },
@@ -97,7 +97,7 @@ export const TEACHERS = [
     bio: 'Former trainee language coach with 5+ years of experience helping global artists perfect their Korean pronunciation. Min-ji blends lyric analysis with active speech feedback.',
     background: 'YG Trainee Language Coach (2018-2022) | Certified Korean Language Teacher (Level 2)',
     tags: ['K-Pop Focus', 'Pronunciation', 'Slang & Idioms', 'Interactive'],
-    roomId: 'KmongLandTeacherMinji',
+    roomId: 'KmongTeacherMinji',
     avatarBg: 'from-purple-500 to-pink-500',
     stats: { students: '1,200', rating: '4.9', hours: '850' },
     hourlyRate: 25,
@@ -122,7 +122,7 @@ export const TEACHERS = [
     bio: 'Specializing in systematic grammar blueprints and TOPIK test preparation. Joon-seo helps students build a solid linguistic foundation to transit from intermediate to advanced levels.',
     background: 'Seoul National University (Korean Literature) | 6+ Years TOPIK Specialist',
     tags: ['TOPIK Prep', 'Grammar Master', 'Writing Audits', 'Structured'],
-    roomId: 'KmongLandTeacherJoonseo',
+    roomId: 'KmongTeacherJoonseo',
     avatarBg: 'from-blue-500 to-indigo-600',
     stats: { students: '980', rating: '5.0', hours: '1,100' },
     hourlyRate: 30,
@@ -147,7 +147,7 @@ export const TEACHERS = [
     bio: 'Learn formal honorifics, corporate speaking standards, and interview strategies. Perfect for international professionals looking to transition smoothly into the Korean business landscape.',
     background: 'Ex-Samsung HR Language Trainer | Ewha Womans University Graduate',
     tags: ['Business Korean', 'Honorifics', 'Interview Prep', 'Corporate'],
-    roomId: 'KmongLandTeacherSohee',
+    roomId: 'KmongTeacherSohee',
     avatarBg: 'from-teal-400 to-emerald-600',
     stats: { students: '750', rating: '4.8', hours: '620' },
     hourlyRate: 35,
@@ -202,139 +202,6 @@ export const TEACHERS = [
     scheduleSlots: [
       { id: 't5_1', day: 'Mon', time: '18:00', booked: false },
       { id: 't5_2', day: 'Wed', time: '20:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_6',
-    name: 'Su-jin Choi',
-    role: 'TOPIK Grammar Coach',
-    bio: 'Specialist for intermediate students aiming to achieve TOPIK Level 5 or 6.',
-    background: 'Korea University Education Studies Graduate',
-    tags: ['TOPIK Prep', 'Grammar Master'],
-    roomId: 'TutorSujin',
-    avatarBg: 'from-yellow-400 to-amber-600',
-    stats: { students: '380', rating: '4.8', hours: '290' },
-    hourlyRate: 28,
-    isNative: true,
-    imageUrl: 'https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't6_1', day: 'Tue', time: '15:00', booked: false },
-      { id: 't6_2', day: 'Fri', time: '16:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_7',
-    name: 'Ye-rin Jung',
-    role: 'K-Pop Culture & Slang Tutor',
-    bio: 'Deep-dive into contemporary K-Pop lyrics, culture trends, and native slang.',
-    background: 'Media & Cultural Studies Specialist, Sogang University',
-    tags: ['K-Pop Focus', 'Slang & Idioms'],
-    roomId: 'TutorYerin',
-    avatarBg: 'from-indigo-400 to-cyan-500',
-    stats: { students: '610', rating: '5.0', hours: '520' },
-    hourlyRate: 24,
-    isNative: true,
-    imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't7_1', day: 'Wed', time: '10:00', booked: false },
-      { id: 't7_2', day: 'Sat', time: '14:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_8',
-    name: 'Alex Johnson',
-    role: 'Bilingual Beginner Coach',
-    bio: 'Dual native speaker providing comfortable foundational training for complete beginners.',
-    background: 'Dual Degree Linguistics, UCLA & Yonsei University',
-    tags: ['Grammar Master', 'Interactive'],
-    roomId: 'TutorAlex',
-    avatarBg: 'from-green-400 to-blue-500',
-    stats: { students: '290', rating: '4.6', hours: '210' },
-    hourlyRate: 20,
-    isNative: false,
-    imageUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't8_1', day: 'Thu', time: '10:00', booked: false },
-      { id: 't8_2', day: 'Fri', time: '14:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_9',
-    name: 'Eun-ji Shin',
-    role: 'Writing & Academic Essay Mentor',
-    bio: 'Enhance your written Korean skills. Weekly essays review, academic grammar correction.',
-    background: 'Kyung Hee University Korean Language Teaching Graduate',
-    tags: ['Writing Audits', 'Structured'],
-    roomId: 'TutorEunji',
-    avatarBg: 'from-red-400 to-pink-500',
-    stats: { students: '320', rating: '4.8', hours: '270' },
-    hourlyRate: 27,
-    isNative: true,
-    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't9_1', day: 'Sat', time: '13:00', booked: false },
-      { id: 't9_2', day: 'Sun', time: '15:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_10',
-    name: 'Dong-hyun Lee',
-    role: 'Corporate Business Coach',
-    bio: 'Perfecting business etiquette, report writing, and job interview skills in Korean.',
-    background: 'Ex-Hyundai Corporate Global Strategy Trainer',
-    tags: ['Business Korean', 'Honorifics'],
-    roomId: 'TutorDonghyun',
-    avatarBg: 'from-gray-700 to-slate-900',
-    stats: { students: '490', rating: '4.9', hours: '390' },
-    hourlyRate: 33,
-    isNative: true,
-    imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't10_1', day: 'Tue', time: '19:00', booked: false },
-      { id: 't10_2', day: 'Thu', time: '20:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_11',
-    name: 'Hye-jin Song',
-    role: 'Casual Speaking Partner',
-    bio: 'Improve speaking confidence in real-world contexts. Warm and casual conversation coach.',
-    background: 'Ewha Womans University Sociology Graduate Specialist',
-    tags: ['Interactive', 'Slang & Idioms'],
-    roomId: 'TutorHyejin',
-    avatarBg: 'from-fuchsia-400 to-purple-600',
-    stats: { students: '650', rating: '4.9', hours: '580' },
-    hourlyRate: 23,
-    isNative: true,
-    imageUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't11_1', day: 'Mon', time: '16:00', booked: false },
-      { id: 't11_2', day: 'Wed', time: '11:00', booked: false }
-    ]
-  },
-  {
-    id: 'tutor_12',
-    name: 'David Carter',
-    role: 'Bilingual Cultural Guide',
-    bio: 'Guiding English-speaking learners through basic structure and everyday speaking patterns.',
-    background: 'Bilingual Instructor, 4 Years in Seoul Global Centers',
-    tags: ['Interactive', 'Pronunciation'],
-    roomId: 'TutorDavid',
-    avatarBg: 'from-sky-400 to-blue-600',
-    stats: { students: '180', rating: '4.5', hours: '120' },
-    hourlyRate: 21,
-    isNative: false,
-    imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600',
-    reviews: [],
-    scheduleSlots: [
-      { id: 't12_1', day: 'Sat', time: '16:00', booked: false },
-      { id: 't12_2', day: 'Sun', time: '17:00', booked: false }
     ]
   }
 ];

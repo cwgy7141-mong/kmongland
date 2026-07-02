@@ -1,10 +1,4 @@
-// ============================================================
-// AuthModal — 로그인/회원가입 모달
-// ============================================================
-// 사이트 어디서든 열 수 있는 풀스크린 로그인 모달
-// Google, Apple, 이메일 로그인 지원
-// ============================================================
-
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -15,10 +9,43 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const { signInWithGoogle, signInWithApple, error, clearError } = useAuth();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const validateInputs = (provider: 'google' | 'apple') => {
+    if (!name.trim()) {
+      setValidationError('이름을 입력해 주세요.');
+      return false;
+    }
+    if (!email.trim() || !email.includes('@')) {
+      setValidationError('올바른 이메일 주소를 입력해 주세요.');
+      return false;
+    }
+
+    const emailLower = email.toLowerCase().trim();
+    if (provider === 'google') {
+      if (!emailLower.endsWith('@gmail.com')) {
+        setValidationError('Google 로그인은 @gmail.com 이메일만 사용할 수 있습니다.');
+        return false;
+      }
+    } else if (provider === 'apple') {
+      const allowedDomains = ['@icloud.com', '@apple.com', '@me.com', '@mac.com'];
+      const isValidApple = allowedDomains.some(domain => emailLower.endsWith(domain));
+      if (!isValidApple) {
+        setValidationError('Apple 로그인은 @icloud.com, @apple.com 등 Apple 관련 이메일만 사용할 수 있습니다.');
+        return false;
+      }
+    }
+
+    setValidationError(null);
+    return true;
+  };
 
   const handleGoogle = async () => {
+    if (!validateInputs('google')) return;
     try {
-      await signInWithGoogle();
+      await signInWithGoogle(email, name);
       onClose();
     } catch {
       // error handled in context
@@ -26,8 +53,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   };
 
   const handleApple = async () => {
+    if (!validateInputs('apple')) return;
     try {
-      await signInWithApple();
+      await signInWithApple(email, name);
       onClose();
     } catch {
       // error handled in context
@@ -77,12 +105,45 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               간편하게 연동하여 수업 예약을 진행할 수 있습니다.
             </p>
 
-            {/* Error */}
-            {error && (
+            {/* Input fields */}
+            <div className="flex flex-col gap-4 mb-6">
+              <div>
+                <label className="text-[12px] text-white/50 uppercase tracking-wider block mb-1.5 font-medium">Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setValidationError(null);
+                  }}
+                  className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] focus:outline-none focus:border-purple-500/50 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-[12px] text-white/50 uppercase tracking-wider block mb-1.5 font-medium">Email Address</label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setValidationError(null);
+                  }}
+                  className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] focus:outline-none focus:border-purple-500/50 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Error Messages */}
+            {(error || validationError) && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-6 text-red-400 text-[13px] flex items-center justify-between">
-                <span>{error}</span>
+                <span>{error || validationError}</span>
                 <button
-                  onClick={clearError}
+                  onClick={() => {
+                    clearError();
+                    setValidationError(null);
+                  }}
                   className="text-red-300 hover:text-red-100 cursor-pointer bg-transparent border-none text-[14px]"
                 >
                   ✕

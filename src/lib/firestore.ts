@@ -191,6 +191,7 @@ export async function deleteProduct(productId: string): Promise<void> {
 export interface TutorApplication {
   id: string;
   name: string;
+  nationality: string;
   email: string;
   phone: string;
   education: string;
@@ -203,6 +204,7 @@ export interface TutorApplication {
   degreeCertName: string;
   licenseCertName: string;
   imageUrl?: string;
+  languages?: string[];
   status: 'pending' | 'approved' | 'rejected';
   createdAt?: any;
 }

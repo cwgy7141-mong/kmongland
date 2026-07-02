@@ -69,7 +69,7 @@ export const PRODUCTS: PayPalProduct[] = [
 export const SUBSCRIPTION_PLANS: PayPalSubscriptionPlan[] = [
   {
     id: 'kmongland-monthly-membership',
-    name: 'k-mong-land Monthly Speech Club',
+    name: 'k-mong Monthly Speech Club',
     description: 'Monthly access to live small-group conversation sessions with certified native speakers.',
     planId: 'YOUR_PAYPAL_PLAN_ID', // PayPal에서 생성한 구독 플랜 ID
     price: '19.00',
@@ -78,7 +78,7 @@ export const SUBSCRIPTION_PLANS: PayPalSubscriptionPlan[] = [
   },
   {
     id: 'kmongland-annual-gold-pass',
-    name: 'k-mong-land Annual Gold Pass',
+    name: 'k-mong Annual Gold Pass',
     description: 'Year-round access to all learning materials, weekly personalized progress reports, and certification exams.',
     planId: 'YOUR_PAYPAL_YEARLY_PLAN_ID',
     price: '199.00',

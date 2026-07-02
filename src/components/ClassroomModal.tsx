@@ -6,7 +6,7 @@ interface ClassroomModalProps {
   roomName?: string;
 }
 
-export function ClassroomModal({ isOpen, onClose, roomName = "KmongLandKoreanLiveClassroom" }: ClassroomModalProps) {
+export function ClassroomModal({ isOpen, onClose, roomName = "KmongKoreanLiveClassroom" }: ClassroomModalProps) {
   const jitsiUrl = `https://meet.jit.si/${roomName}#config.startWithAudioMuted=true&config.startWithVideoMuted=true`;
 
   return (
@@ -35,7 +35,7 @@ export function ClassroomModal({ isOpen, onClose, roomName = "KmongLandKoreanLiv
               <div className="flex items-center gap-2.5">
                 <div className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
                 <span className="text-white text-[16px] font-medium tracking-tight">
-                  k-mong-land Live Classroom
+                  k-mong Live Classroom
                 </span>
                 <span className="text-white/40 text-[12px] bg-white/5 px-2.5 py-0.5 rounded-full">
                   Powered by Jitsi Meet
@@ -55,9 +55,9 @@ export function ClassroomModal({ isOpen, onClose, roomName = "KmongLandKoreanLiv
             <div className="flex-1 bg-black relative">
               <iframe
                 src={jitsiUrl}
-                allow="camera; microphone; fullscreen; display-capture; autoplay"
+                allow="camera *; microphone *; fullscreen; display-capture; autoplay; clipboard-write"
                 className="absolute inset-0 w-full h-full border-none"
-                title="k-mong-land Live Class Video Feed"
+                title="k-mong Live Class Video Feed"
               />
             </div>
 

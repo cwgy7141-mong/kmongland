@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createTutorApplication } from '../lib/firestore';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ApplyTutorModalProps {
   isOpen: boolean;
@@ -23,7 +24,9 @@ const AVAILABLE_TAGS = [
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
+  const [nationality, setNationality] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [education, setEducation] = useState('');
@@ -33,6 +36,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
   const [bio, setBio] = useState('');
   const [hourlyRate, setHourlyRate] = useState(25);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [supportedLanguages, setSupportedLanguages] = useState<string[]>([]);
   const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -42,6 +46,8 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
   const [degreeCertLoading, setDegreeCertLoading] = useState(false);
   const [licenseCertName, setLicenseCertName] = useState('');
   const [licenseCertLoading, setLicenseCertLoading] = useState(false);
+  const [imageFileName, setImageFileName] = useState('');
+  const [imageFileLoading, setImageFileLoading] = useState(false);
 
   const handleTagToggle = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -56,6 +62,14 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
       setAvailableDays(availableDays.filter((d) => d !== day));
     } else {
       setAvailableDays([...availableDays, day]);
+    }
+  };
+
+  const handleLanguageToggle = (lang: string) => {
+    if (supportedLanguages.includes(lang)) {
+      setSupportedLanguages(supportedLanguages.filter((l) => l !== lang));
+    } else {
+      setSupportedLanguages([...supportedLanguages, lang]);
     }
   };
 
@@ -78,6 +92,27 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
     }
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setImageFileLoading(true);
+    setImageFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        setImageUrl(event.target.result as string);
+      }
+      setImageFileLoading(false);
+    };
+    reader.onerror = () => {
+      alert('이미지 파일을 읽는 중 오류가 발생했습니다.');
+      setImageFileLoading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!degreeCertName) {
@@ -95,6 +130,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
       await createTutorApplication({
         id: appId,
         name,
+        nationality,
         email,
         phone,
         education,
@@ -104,6 +140,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
         bio,
         hourlyRate,
         tags: selectedTags,
+        languages: supportedLanguages,
         degreeCertName,
         licenseCertName,
         imageUrl,
@@ -130,11 +167,14 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
     setBio('');
     setHourlyRate(25);
     setSelectedTags([]);
+    setSupportedLanguages([]);
     setImageUrl('');
     setDegreeCertName('');
     setDegreeCertLoading(false);
     setLicenseCertName('');
     setLicenseCertLoading(false);
+    setImageFileName('');
+    setImageFileLoading(false);
     onClose();
   };
 
@@ -168,8 +208,8 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
             {/* Header */}
             <div className="p-6 sm:p-8 border-b border-white/5 flex items-center justify-between shrink-0">
               <div>
-                <h2 className="text-white text-[22px] font-semibold tracking-tight">강사 지원하기</h2>
-                <p className="text-white/40 text-[13px] mt-1">Kmong Land의 전문 한국어 강사 이력서를 작성해 주세요.</p>
+                <h2 className="text-white text-[22px] font-semibold tracking-tight">{t('applyTitle')}</h2>
+                <p className="text-white/40 text-[13px] mt-1">{t('applySubtitle')}</p>
               </div>
               <button
                 onClick={handleClose}
@@ -186,37 +226,54 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                   <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 text-[24px] mb-5">
                     ✓
                   </div>
-                  <h3 className="text-white text-[18px] font-semibold mb-2">지원서 제출 완료!</h3>
+                  <h3 className="text-white text-[18px] font-semibold mb-2">{t('applySuccessTitle')}</h3>
                   <p className="text-white/40 text-[14px] leading-relaxed max-w-sm mx-auto mb-8">
-                    졸업증명서와 자격증 증빙서류가 정상적으로 등록되었습니다. 검토 후 개별 연락 드리겠습니다.
+                    {t('applySuccessDesc')}
                   </p>
                   <button
                     onClick={handleClose}
                     className="px-6 h-12 bg-white text-black font-semibold rounded-xl text-[14px] hover:bg-white/90 active:scale-[0.98] transition-all cursor-pointer border-none"
                   >
-                    메인으로 돌아가기
+                    {t('applyBackToMain')}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-left">
-                  {/* Name & Email */}
+                  {/* Nationality & Name */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                        이름 (Name)
+                        {t('applyNationality')}
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="홍길동"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        placeholder="e.g. South Korea, USA"
+                        value={nationality}
+                        onChange={(e) => setNationality(e.target.value)}
                         className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
                       />
                     </div>
                     <div>
                       <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                        이메일 주소 (Email Address)
+                        {t('applyName')}
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Hong Gil Dong"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email & Phone */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
+                        {t('applyEmail')}
                       </label>
                       <input
                         type="email"
@@ -227,62 +284,43 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                         className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
                       />
                     </div>
-                  </div>
-
-                  {/* Phone & Education */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                        전화번호 (Phone Number)
+                        {t('applyPhone')}
                       </label>
                       <input
-                        type="tel"
+                        type="text"
                         required
-                        placeholder="010-1234-5678"
+                        placeholder="+82 10-1234-5678"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
                       />
                     </div>
+                  </div>
+
+                  {/* Education & Certifications */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                        최종학력 및 전공 (Education)
+                        {t('applyEducation')}
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="OO대학교 국어국문학과 학사"
+                        placeholder="e.g. SNU Korean Literature, BA"
                         value={education}
                         onChange={(e) => setEducation(e.target.value)}
                         className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
                       />
                     </div>
-                  </div>
-
-                  {/* Experience & Certifications */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                        강의 경력 (Teaching Experience)
-                      </label>
-                      <select
-                        value={experienceYears}
-                        onChange={(e) => setExperienceYears(e.target.value)}
-                        className="w-full h-11 bg-[#121212] border border-white/10 rounded-xl px-4 text-white text-[14px] outline-none focus:border-purple-500/50 transition-colors"
-                      >
-                        <option value="under1">1년 미만</option>
-                        <option value="1to3">1년 이상 ~ 3년 미만</option>
-                        <option value="3to5">3년 이상 ~ 5년 미만</option>
-                        <option value="over5">5년 이상</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                        보유 자격증명 (Certifications)
+                        {t('applyCertifications')}
                       </label>
                       <input
                         type="text"
-                        placeholder="한국어교원자격증 2급, OPIc AL 등"
+                        placeholder="e.g. TOPIK 6, English Teaching License"
                         value={certifications}
                         onChange={(e) => setCertifications(e.target.value)}
                         className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
@@ -290,10 +328,29 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                     </div>
                   </div>
 
+                  {/* Experience */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
+                        {t('applyExpYears')}
+                      </label>
+                      <select
+                        value={experienceYears}
+                        onChange={(e) => setExperienceYears(e.target.value)}
+                        className="w-full h-11 bg-[#121212] border border-white/10 rounded-xl px-4 text-white text-[14px] outline-none focus:border-purple-500/50 transition-colors"
+                      >
+                        <option value="under1">{t('language') === 'ko' ? '1년 미만' : 'Under 1 year'}</option>
+                        <option value="1to3">{t('language') === 'ko' ? '1년 이상 ~ 3년 미만' : '1 to 3 years'}</option>
+                        <option value="3to5">{t('language') === 'ko' ? '3년 이상 ~ 5년 미만' : '3 to 5 years'}</option>
+                        <option value="over5">{t('language') === 'ko' ? '5년 이상' : '5+ years'}</option>
+                      </select>
+                    </div>
+                  </div>
+
                   {/* Availability Days */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2.5 block">
-                      수업 가능 요일 선택 (Available Days)
+                      {t('applyAvailableDays')}
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {WEEKDAYS.map((day) => {
@@ -319,7 +376,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                   {/* Hourly Rate */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                      희망 시급 (Hourly Rate / USD)
+                      {t('applyHourlyRate')}
                     </label>
                     <div className="flex items-center gap-3">
                       <input
@@ -338,7 +395,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                   {/* Tags */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2.5 block">
-                      전문 특화 분야 (Specialized tags)
+                      {t('applySpecialTags')}
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {AVAILABLE_TAGS.map((tag) => {
@@ -361,39 +418,98 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                     </div>
                   </div>
 
+                  {/* Supported Languages */}
+                  <div>
+                    <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2.5 block">
+                      {t('applyTeachableLangs')}
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { code: 'English', label: t('language') === 'ko' ? '영어 (English)' : 'English' },
+                        { code: 'Korean', label: t('language') === 'ko' ? '한국어 (Korean)' : 'Korean' },
+                        { code: 'Japanese', label: t('language') === 'ko' ? '일본어 (Japanese)' : 'Japanese' },
+                        { code: 'Chinese', label: t('language') === 'ko' ? '중국어 (Chinese)' : 'Chinese' },
+                        { code: 'Thai', label: t('language') === 'ko' ? '태국어 (Thai)' : 'Thai' },
+                        { code: 'Vietnamese', label: t('language') === 'ko' ? '베트남어 (Vietnamese)' : 'Vietnamese' },
+                        { code: 'Indonesian', label: t('language') === 'ko' ? '인도네시아어 (Indonesian)' : 'Indonesian' },
+                        { code: 'Spanish', label: t('language') === 'ko' ? '스페인어 (Spanish)' : 'Spanish' },
+                        { code: 'French', label: t('language') === 'ko' ? '프랑스어 (French)' : 'French' },
+                        { code: 'Russian', label: t('language') === 'ko' ? '러시아어 (Russian)' : 'Russian' },
+                        { code: 'German', label: t('language') === 'ko' ? '독일어 (German)' : 'German' }
+                      ].map((lang) => {
+                        const isSelected = supportedLanguages.includes(lang.code);
+                        return (
+                          <button
+                            type="button"
+                            key={lang.code}
+                            onClick={() => handleLanguageToggle(lang.code)}
+                            className={`px-3 py-1.5 rounded-xl text-[12px] font-medium border transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-purple-600 border-purple-500 text-white shadow-md shadow-purple-500/10'
+                                : 'bg-transparent border-white/10 text-white/50 hover:text-white/80 hover:border-white/20'
+                            }`}
+                          >
+                            {lang.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
                   {/* Bio */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                      자기소개 및 경력 사항 (Biography & Experience)
+                      {t('applyBio')}
                     </label>
                     <textarea
                       required
                       rows={4}
-                      placeholder="강사 경력, 수업 방식 등 학생들에게 어필할 상세 소개글을 작성해 주세요."
+                      placeholder={t('language') === 'ko' ? "강사 경력, 수업 방식 등 학생들에게 어필할 상세 소개글을 작성해 주세요." : "Describe your teaching background, methodologies, and what students can expect."}
                       value={bio}
                       onChange={(e) => setBio(e.target.value)}
                       className="w-full bg-white/[0.05] border border-white/10 rounded-xl p-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors resize-none leading-relaxed"
                     />
                   </div>
 
-                  {/* Image URL */}
+                  {/* Profile Photo File Upload */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                      프로필 사진 이미지 링크 (Profile Image URL)
+                      {t('applyPhoto')}
                     </label>
-                    <input
-                      type="url"
-                      placeholder="https://images.unsplash.com/..."
-                      value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
-                      className="w-full h-11 bg-white/[0.05] border border-white/10 rounded-xl px-4 text-white text-[14px] placeholder:text-white/20 outline-none focus:border-purple-500/50 transition-colors"
-                    />
+                    <div className="flex gap-4 items-center">
+                      <div className="relative flex-1 h-14 bg-white/[0.04] border border-dashed border-white/15 hover:border-purple-500/40 rounded-xl flex items-center justify-between px-4 transition-all duration-300">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        />
+                        <div className="flex items-center gap-3">
+                          <i className={`bi ${imageFileLoading ? 'bi-arrow-repeat animate-spin text-purple-400' : imageUrl ? 'bi-image text-emerald-400' : 'bi-cloud-upload text-white/40'} text-[18px]`} />
+                          <span className={`text-[13px] ${imageUrl ? 'text-white font-medium' : 'text-white/30'}`}>
+                            {imageFileLoading ? 'Uploading image...' : imageFileName || (t('language') === 'ko' ? '프로필 이미지 파일 선택 (JPG, PNG, GIF)' : 'Select profile image file (JPG, PNG, GIF)')}
+                          </span>
+                        </div>
+                        {!imageFileLoading && imageUrl && (
+                          <span className="text-[11px] text-emerald-400 font-semibold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full uppercase">
+                            Loaded
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Image Preview Block */}
+                      {imageUrl && (
+                        <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 bg-black/40 shrink-0 flex items-center justify-center">
+                          <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Attachment 1: Graduation Certificate File */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                      졸업증명서 첨부 (Graduation Certificate) <span className="text-red-400">*</span>
+                      {t('applyDegree')} <span className="text-red-400">*</span>
                     </label>
                     <div className="relative h-14 bg-white/[0.04] border border-dashed border-white/15 hover:border-purple-500/40 rounded-xl flex items-center justify-between px-4 transition-all duration-300">
                       <input
@@ -405,7 +521,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                       <div className="flex items-center gap-3">
                         <i className={`bi ${degreeCertLoading ? 'bi-arrow-repeat animate-spin text-purple-400' : degreeCertName ? 'bi-file-earmark-check-fill text-emerald-400' : 'bi-cloud-upload text-white/40'} text-[18px]`} />
                         <span className={`text-[13px] ${degreeCertName ? 'text-white font-medium' : 'text-white/30'}`}>
-                          {degreeCertLoading ? 'Uploading certificate...' : degreeCertName || '졸업증명서 파일 선택 (PDF, JPG, PNG)'}
+                          {degreeCertLoading ? 'Uploading certificate...' : degreeCertName || (t('language') === 'ko' ? '졸업증명서 파일 선택 (PDF, JPG, PNG)' : 'Select graduation certificate file (PDF, JPG, PNG)')}
                         </span>
                       </div>
                       {!degreeCertLoading && degreeCertName && (
@@ -419,7 +535,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                   {/* Attachment 2: Certification File */}
                   <div>
                     <label className="text-white/50 text-[12px] font-medium uppercase tracking-wider mb-2 block">
-                      자격증 첨부 (Certifications / Licenses) <span className="text-red-400">*</span>
+                      {t('applyLicense')} <span className="text-red-400">*</span>
                     </label>
                     <div className="relative h-14 bg-white/[0.04] border border-dashed border-white/15 hover:border-purple-500/40 rounded-xl flex items-center justify-between px-4 transition-all duration-300">
                       <input
@@ -431,7 +547,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                       <div className="flex items-center gap-3">
                         <i className={`bi ${licenseCertLoading ? 'bi-arrow-repeat animate-spin text-purple-400' : licenseCertName ? 'bi-file-earmark-check-fill text-emerald-400' : 'bi-cloud-upload text-white/40'} text-[18px]`} />
                         <span className={`text-[13px] ${licenseCertName ? 'text-white font-medium' : 'text-white/30'}`}>
-                          {licenseCertLoading ? 'Uploading certificate...' : licenseCertName || '보유 자격증 사본 파일 선택 (PDF, JPG, PNG)'}
+                          {licenseCertLoading ? 'Uploading certificate...' : licenseCertName || (t('language') === 'ko' ? '보유 자격증 사본 파일 선택 (PDF, JPG, PNG)' : 'Select certification/license file (PDF, JPG, PNG)')}
                         </span>
                       </div>
                       {!licenseCertLoading && licenseCertName && (
@@ -448,7 +564,7 @@ export function ApplyTutorModal({ isOpen, onClose }: ApplyTutorModalProps) {
                     disabled={loading || degreeCertLoading || licenseCertLoading}
                     className="w-full h-13 bg-white text-black font-semibold rounded-xl text-[14px] hover:bg-white/90 active:scale-[0.98] transition-all cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed mt-2"
                   >
-                    {loading ? '제출 중...' : '지원서 제출하기'}
+                    {loading ? t('applySubmitting') : t('applySubmit')}
                   </button>
                 </form>
               )}

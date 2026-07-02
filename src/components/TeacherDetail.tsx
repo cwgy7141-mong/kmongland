@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PayPalCheckoutButton from './payment/PayPalCheckoutButton';
-
+import { useLanguage } from '../contexts/LanguageContext';
 
 export interface Teacher {
   id: string;
@@ -43,6 +43,7 @@ interface TeacherDetailProps {
 }
 
 export function TeacherDetail({ isOpen, onClose, teacher, onStartSession }: TeacherDetailProps) {
+  const { t } = useLanguage();
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   
@@ -121,7 +122,9 @@ export function TeacherDetail({ isOpen, onClose, teacher, onStartSession }: Teac
                           </span>
                         )}
                       </div>
-                      <p className="text-purple-400 text-[15px] font-medium">{teacher.role}</p>
+                      <p className="text-purple-400 text-[15px] font-medium">
+                        {t(`tutor_${teacher.id}_role`).startsWith('tutor_') ? teacher.role : t(`tutor_${teacher.id}_role`)}
+                      </p>
                       
                       {/* Sub-stats */}
                       <div className="flex items-center gap-4 text-white/40 text-[12px] mt-3">
@@ -150,11 +153,15 @@ export function TeacherDetail({ isOpen, onClose, teacher, onStartSession }: Teac
                   <div className="flex flex-col gap-6 border-t border-white/5 pt-6 text-[14px] leading-relaxed">
                     <div>
                       <h4 className="text-white/50 font-medium mb-2 uppercase text-[11px] tracking-wider">About Me</h4>
-                      <p className="text-white/80">{teacher.bio}</p>
+                      <p className="text-white/80">
+                        {t(`tutor_${teacher.id}_bio`).startsWith('tutor_') ? teacher.bio : t(`tutor_${teacher.id}_bio`)}
+                      </p>
                     </div>
                     <div>
                       <h4 className="text-white/50 font-medium mb-2 uppercase text-[11px] tracking-wider">My Teaching Experience</h4>
-                      <p className="text-white/70">{teacher.background}</p>
+                      <p className="text-white/70">
+                        {t(`tutor_${teacher.id}_background`).startsWith('tutor_') ? teacher.background : t(`tutor_${teacher.id}_background`)}
+                      </p>
                     </div>
                   </div>
 

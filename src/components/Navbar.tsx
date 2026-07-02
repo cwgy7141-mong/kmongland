@@ -6,7 +6,9 @@ import { ScrambleText } from './ScrambleText';
 import { AuthModal } from './AuthModal';
 import { ClassroomModal } from './ClassroomModal';
 import { ApplyTutorModal } from './ApplyTutorModal';
+import { MyPageModal } from './MyPageModal';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { SITE_CONFIG } from '../config/content';
 
 interface NavbarProps {
@@ -16,6 +18,7 @@ interface NavbarProps {
   classroomOpen: boolean;
   setClassroomOpen: (open: boolean) => void;
   classroomRoomName?: string;
+  setCustomRoomId: (id: string) => void;
   applyTutorOpen: boolean;
   setApplyTutorOpen: (open: boolean) => void;
 }
@@ -27,13 +30,16 @@ export function Navbar({
   classroomOpen,
   setClassroomOpen,
   classroomRoomName,
+  setCustomRoomId,
   applyTutorOpen,
   setApplyTutorOpen,
 }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [tutorsHovered, setTutorsHovered] = useState(false);
   const [resourcesHovered, setResourcesHovered] = useState(false);
+  const [myPageOpen, setMyPageOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
 
 
 
@@ -103,13 +109,13 @@ export function Navbar({
                     exit={{ opacity: 0, x: 15 }}
                     transition={{ duration: 0.25 }}
                   >
-                    <button
+                     <button
                       className="text-[16px] font-normal text-white/85 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
                       onMouseEnter={() => setTutorsHovered(true)}
                       onMouseLeave={() => setTutorsHovered(false)}
                       onClick={() => scrollTo('tutors')}
                     >
-                      <ScrambleText text="Tutors" isHovered={tutorsHovered} />
+                      <ScrambleText text={t('navTutors')} isHovered={tutorsHovered} />
                     </button>
                     <button
                       className="text-[16px] font-normal text-white/85 hover:text-white transition-colors cursor-pointer bg-transparent border-none"
@@ -117,7 +123,7 @@ export function Navbar({
                       onMouseLeave={() => setResourcesHovered(false)}
                       onClick={() => scrollTo('resources')}
                     >
-                      <ScrambleText text="Resources" isHovered={resourcesHovered} />
+                      <ScrambleText text={t('navResources')} isHovered={resourcesHovered} />
                     </button>
                   </motion.div>
                 )}
@@ -127,20 +133,54 @@ export function Navbar({
 
           {/* Right buttons */}
           <div className="flex items-center gap-2">
+            {/* Language Selector Dropdown (Desktop) */}
+            <div className="relative group mr-1">
+              <button className="h-12 px-3 bg-[#0e0e12]/70 hover:bg-[#0e0e12]/90 border border-white/15 text-white rounded-[14px] flex items-center gap-1.5 cursor-pointer text-[13px] font-bold transition-all duration-200 backdrop-blur-md">
+                <i className="bi bi-globe text-[15px] text-purple-400" />
+                <span className="uppercase">{language}</span>
+                <i className="bi bi-chevron-down text-[10px] opacity-60" />
+              </button>
+              <div className="absolute right-0 top-13 hidden group-hover:block bg-[#0e0e12] border border-white/10 rounded-xl overflow-hidden shadow-2xl py-1 z-50 w-36 max-h-60 overflow-y-auto">
+                {[
+                  { code: 'en', label: 'English' },
+                  { code: 'ko', label: '한국어' },
+                  { code: 'ja', label: '日本語' },
+                  { code: 'zh', label: '中文' },
+                  { code: 'th', label: 'ภาษาไทย' },
+                  { code: 'vi', label: 'Tiếng Việt' },
+                  { code: 'id', label: 'Indonesian' },
+                  { code: 'es', label: 'Español' },
+                  { code: 'fr', label: 'Français' },
+                  { code: 'ru', label: 'Русский' },
+                  { code: 'de', label: 'Deutsch' }
+                ].map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code as any)}
+                    className={`w-full text-left px-4 py-2 text-[12px] transition-colors hover:bg-white/5 cursor-pointer border-none bg-transparent ${
+                      language === lang.code ? 'text-purple-400 font-bold' : 'text-white/60'
+                    }`}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Apply as a Tutor Button */}
             <motion.button
               onClick={() => setApplyTutorOpen(true)}
-              className="h-12 px-4.5 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-300 rounded-[14px] flex items-center gap-2 cursor-pointer text-[14px] font-semibold transition-all duration-300"
+              className="h-12 px-4.5 bg-purple-600/25 hover:bg-purple-600/40 border border-purple-500/40 text-purple-200 rounded-[14px] flex items-center gap-2 cursor-pointer text-[14px] font-bold transition-all duration-300 backdrop-blur-md"
               whileTap={{ scale: 0.97 }}
             >
               <i className="bi bi-person-badge text-[16px]" />
-              <span>Apply as a Tutor</span>
+              <span>{t('navApplyTutor')}</span>
             </motion.button>
             
             {/* Sign In / User button */}
             {user ? (
               <div className="flex items-center gap-2">
-                <div className="h-12 px-5 bg-white/10 backdrop-blur-md rounded-[14px] flex items-center gap-3">
+                <div className="h-12 px-5 bg-white/10 backdrop-blur-md rounded-[14px] flex items-center gap-3.5">
                   {user.photoURL ? (
                     <img
                       src={user.photoURL}
@@ -152,24 +192,36 @@ export function Navbar({
                       {(user.displayName?.[0] || user.email?.[0] || 'U').toUpperCase()}
                     </div>
                   )}
-                  <span className="text-[14px] text-white/80 max-w-[120px] truncate">
+                  <span className="text-[14px] text-white/85 max-w-[120px] truncate font-medium">
                     {user.displayName || user.email?.split('@')[0] || 'User'}
                   </span>
+                  
+                  <span className="text-white/10">|</span>
+                  
+                  <button
+                    onClick={() => setMyPageOpen(true)}
+                    className="text-[12px] text-purple-300 hover:text-purple-200 transition-colors cursor-pointer bg-transparent border-none font-semibold"
+                  >
+                    {t('navMyPage')}
+                  </button>
+
+                  <span className="text-white/10">|</span>
+
                   <button
                     onClick={signOut}
-                    className="text-[12px] text-white/40 hover:text-white/80 transition-colors cursor-pointer bg-transparent border-none ml-1"
+                    className="text-[12px] text-white/40 hover:text-white/80 transition-colors cursor-pointer bg-transparent border-none"
                   >
-                    Sign Out
+                    {t('navSignOut')}
                   </button>
                 </div>
               </div>
             ) : (
               <motion.button
-                className="h-12 px-5 bg-white/10 backdrop-blur-md rounded-[14px] flex items-center gap-2 cursor-pointer border-none text-white/85 text-[15px] font-medium hover:bg-white/20 transition-colors"
+                className="h-12 px-5 bg-[#0e0e12]/70 hover:bg-[#0e0e12]/90 border border-white/15 rounded-[14px] flex items-center gap-2 cursor-pointer text-white text-[15px] font-bold transition-colors backdrop-blur-md"
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setAuthOpen(true)}
               >
-                Sign In
+                {t('navSignIn')}
               </motion.button>
             )}
 
@@ -226,14 +278,25 @@ export function Navbar({
                       className="text-[13px] font-normal text-white/85 cursor-pointer bg-transparent border-none"
                       onClick={() => scrollTo('tutors')}
                     >
-                      Tutors
+                      {t('navTutors')}
                     </button>
                     <button
                       className="text-[13px] font-normal text-white/85 cursor-pointer bg-transparent border-none"
                       onClick={() => scrollTo('resources')}
                     >
-                      Resources
+                      {t('navResources')}
                     </button>
+                    {user && (
+                      <button
+                        className="text-[13px] font-semibold text-purple-300 cursor-pointer bg-transparent border-none"
+                        onClick={() => {
+                          setMyPageOpen(true);
+                          setMenuOpen(false);
+                        }}
+                      >
+                        {t('navMyPage')}
+                      </button>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -242,13 +305,46 @@ export function Navbar({
 
           {/* Right buttons */}
           <div className="flex items-center gap-1.5 ml-2">
+            {/* Mobile Language Selector */}
+            <div className="relative group mr-1">
+              <button className="h-9 px-2 bg-white/10 text-white/80 rounded-[10px] flex items-center gap-1 cursor-pointer text-[11px] font-medium border border-white/5">
+                <i className="bi bi-globe text-purple-400" />
+                <span className="uppercase">{language}</span>
+              </button>
+              <div className="absolute right-0 top-10 hidden group-hover:block bg-[#0e0e12] border border-white/10 rounded-lg overflow-hidden shadow-2xl py-1 z-50 w-36 max-h-60 overflow-y-auto">
+                {[
+                  { code: 'en', label: 'English' },
+                  { code: 'ko', label: '한국어' },
+                  { code: 'ja', label: '日本語' },
+                  { code: 'zh', label: '中文' },
+                  { code: 'th', label: 'ภาษาไทย' },
+                  { code: 'vi', label: 'Tiếng Việt' },
+                  { code: 'id', label: 'Indonesian' },
+                  { code: 'es', label: 'Español' },
+                  { code: 'fr', label: 'Français' },
+                  { code: 'ru', label: 'Русский' },
+                  { code: 'de', label: 'Deutsch' }
+                ].map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code as any)}
+                    className={`w-full text-left px-3 py-1.5 text-[11px] hover:bg-white/5 cursor-pointer border-none bg-transparent ${
+                      language === lang.code ? 'text-purple-400 font-bold' : 'text-white/60'
+                    }`}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Apply button (mobile) */}
             <motion.button
               onClick={() => setApplyTutorOpen(true)}
               className="h-9 px-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 text-purple-300 rounded-[10px] flex items-center gap-1 cursor-pointer text-[11px] font-semibold transition-all duration-300"
               whileTap={{ scale: 0.97 }}
             >
-              Apply
+              {t('navTutors').substring(0, 5)}
             </motion.button>
 
             {/* Sign In / Avatar */}
@@ -256,7 +352,7 @@ export function Navbar({
               <motion.button
                 className="h-9 w-9 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center cursor-pointer border-none overflow-hidden"
                 whileTap={{ scale: 0.9 }}
-                onClick={signOut}
+                onClick={() => setMyPageOpen(true)}
               >
                 {user.photoURL ? (
                   <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
@@ -272,7 +368,7 @@ export function Navbar({
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setAuthOpen(true)}
               >
-                Sign In
+                {t('navSignIn')}
               </motion.button>
             )}
 
@@ -289,6 +385,16 @@ export function Navbar({
 
       {/* Apply Tutor Modal */}
       <ApplyTutorModal isOpen={applyTutorOpen} onClose={() => setApplyTutorOpen(false)} />
+
+      {/* My Page Modal */}
+      <MyPageModal
+        isOpen={myPageOpen}
+        onClose={() => setMyPageOpen(false)}
+        onStartSession={(roomId) => {
+          setCustomRoomId(roomId);
+          setClassroomOpen(true);
+        }}
+      />
     </>
   );
 }

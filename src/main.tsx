@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 import { AuthProvider } from './contexts/AuthContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 import { PAYPAL_CONFIG } from './lib/paypal'
 import App from './App.tsx'
 import './index.css'
@@ -16,7 +17,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <PayPalScriptProvider options={paypalOptions}>
       <AuthProvider>
-        <App />
+        <LanguageProvider>
+          <App />
+        </LanguageProvider>
       </AuthProvider>
     </PayPalScriptProvider>
   </StrictMode>,

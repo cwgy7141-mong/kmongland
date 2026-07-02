@@ -38,8 +38,8 @@ interface AuthContextType {
   error: string | null;
 
   // Auth methods
-  signInWithGoogle: () => Promise<void>;
-  signInWithApple: () => Promise<void>;
+  signInWithGoogle: (customEmail?: string, customName?: string) => Promise<void>;
+  signInWithApple: (customEmail?: string, customName?: string) => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -111,11 +111,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Sign-in methods ──
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (customEmail?: string, customName?: string) => {
     if (isFirebasePlaceholder) {
       setError(null);
-      const inputName = prompt('Enter your name for Google Login:', 'Learner') || 'Learner';
-      const inputEmail = prompt('Enter your email:', `${inputName.toLowerCase().replace(/\s+/g, '')}@example.com`) || 'learner@example.com';
+      const inputName = customName || prompt('Enter your name for Google Login:', 'Learner') || 'Learner';
+      const inputEmail = customEmail || prompt('Enter your email:', `${inputName.toLowerCase().replace(/\s+/g, '')}@example.com`) || 'learner@example.com';
       const mockUser = {
         uid: 'mock_google_' + Date.now(),
         email: inputEmail,
@@ -146,11 +146,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signInWithApple = async () => {
+  const signInWithApple = async (customEmail?: string, customName?: string) => {
     if (isFirebasePlaceholder) {
       setError(null);
-      const inputName = prompt('Enter your name for Apple Login:', 'User') || 'User';
-      const inputEmail = prompt('Enter your email:', `${inputName.toLowerCase().replace(/\s+/g, '')}@example.com`) || 'user@example.com';
+      const inputName = customName || prompt('Enter your name for Apple Login:', 'User') || 'User';
+      const inputEmail = customEmail || prompt('Enter your email:', `${inputName.toLowerCase().replace(/\s+/g, '')}@example.com`) || 'user@example.com';
       const mockUser = {
         uid: 'mock_apple_' + Date.now(),
         email: inputEmail,
