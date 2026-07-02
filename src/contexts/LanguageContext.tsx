@@ -469,7 +469,6 @@ const DICTIONARY: Record<Language, Record<string, any>> = {
     tutor_tutor_8_tag_2: "対話型レッスン",
     tutor_tutor_9_role: "韓国語作文＆論述指導専門講師",
     tutor_tutor_9_bio: "韓国語の記述能力を高めます。週ごとのエッセイ添削と学術文法の精密校正を行います。",
-    footerTagline: '同胞から楽に学び、韓国語の実力を分かち合いながら共に成長するグローバル韓国語マッチングプラットフォーム。',
     tutor_tutor_9_tag_1: "作文添削",
     tutor_tutor_9_tag_2: "体系的授業",
     tutor_tutor_10_role: "企業ビジネス専門韓国語コーチ",

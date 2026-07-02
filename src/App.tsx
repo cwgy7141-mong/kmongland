@@ -92,7 +92,7 @@ export default function App() {
 
 
   /* ── Destructure config for readability ── */
-  const { hero, footer } = SITE_CONFIG;
+  const { hero } = SITE_CONFIG;
 
   return (
     <div style={{ fontFamily: '"Space Mono", monospace' }}>

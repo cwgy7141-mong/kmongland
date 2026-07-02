@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
-import { TEACHERS, Teacher } from '../config/content';
+import { TEACHERS } from '../config/content';
+import { Teacher } from './TeacherDetail';
 
 interface MyPageModalProps {
   isOpen: boolean;
